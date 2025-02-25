@@ -7,6 +7,10 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+          name = 'ajoberstar-backup'
+          url = 'https://ajoberstar.org/bintray-backup/'
+        }
     }
     dependencies {
         // This must be applied in the root project otherwise each subproject will
@@ -22,6 +26,7 @@ plugins {
     id 'org.ajoberstar.grgit' version '3.1.1'
     id 'net.ltgt.errorprone' version '1.1.1'
 }
+
 
 subprojects {
     def androidProject = ((project.name == 'conscrypt-android')

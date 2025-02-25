@@ -25,6 +25,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -40,6 +42,8 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     private final SSLParametersImpl sslParameters;
     private final IOException instantiationException;
     private boolean useEngineSocket = useEngineSocketByDefault;
+
+    private static final Logger logger = Logger.getLogger(OpenSSLSocketFactoryImpl.class.getName());
 
     OpenSSLSocketFactoryImpl() {
         SSLParametersImpl sslParametersLocal = null;
@@ -149,6 +153,16 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     @Override
     public Socket createSocket(Socket socket, String hostname, int port, boolean autoClose)
             throws IOException {
+        logger.log(Level.INFO, "CONSCRYPT:createSocket(Socket socket, String hostname, int port, boolean autoClose)");
+        if (logger.isLoggable(Level.INFO)) {
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            StringBuilder sb = new StringBuilder("Backtrace:\n");
+            // Skip first 2 elements as they are getStackTrace() and this method
+            for (int i = 2; i < stackTrace.length; i++) {
+                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
+            }
+            logger.log(Level.INFO, sb.toString());
+        }
         Preconditions.checkNotNull(socket, "socket");
         if (!socket.isConnected()) {
             throw new SocketException("Socket is not connected.");
