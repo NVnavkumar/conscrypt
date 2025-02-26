@@ -151,8 +151,8 @@ abstract class AbstractConscryptSocket extends SSLSocket {
         if (logger.isLoggable(java.util.logging.Level.INFO)) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first 2 elements as they are getStackTrace() and this method
-            for (int i = 2; i < stackTrace.length; i++) {
+            // Skip first element it is getStackTrace()
+            for (int i = 1; i < stackTrace.length; i++) {
                 sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
             }
             logger.log(java.util.logging.Level.INFO, sb.toString());
