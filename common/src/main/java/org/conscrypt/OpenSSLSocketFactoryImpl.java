@@ -102,6 +102,10 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
             StringBuilder sb = new StringBuilder("Backtrace:\n");
             // Skip first 2 elements as they are getStackTrace() and this method
             for (int i = 2; i < stackTrace.length; i++) {
+                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
+            }
+            logger.log(Level.INFO, sb.toString());
+        }
         if (instantiationException != null) {
             throw instantiationException;
         }
@@ -120,6 +124,10 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
             StringBuilder sb = new StringBuilder("Backtrace:\n");
             // Skip first 2 elements as they are getStackTrace() and this method
             for (int i = 2; i < stackTrace.length; i++) {
+                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
+            }
+            logger.log(Level.INFO, sb.toString());
+        }
         if (useEngineSocket) {
             return createEngineSocket(
                     hostname, port, (SSLParametersImpl) sslParameters.clone());
