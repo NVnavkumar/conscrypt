@@ -44,6 +44,7 @@ import javax.net.ssl.SSLSocket;
 abstract class AbstractConscryptSocket extends SSLSocket {
     final Socket socket;
     private final boolean autoClose;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbstractConscryptSocket.class.getName());
 
     /**
      * The peer's DNS hostname if it was supplied during creation. Note that
@@ -144,6 +145,17 @@ abstract class AbstractConscryptSocket extends SSLSocket {
      */
     @Override
     public final void connect(SocketAddress endpoint, int timeout) throws IOException {
+        logger.log(java.util.logging.Level.INFO, "CONSCRYPT:connect(SocketAddress endpoint, int timeout)");
+        logger.log(java.util.logging.Level.INFO, "CONSCRYPT:endpoint: " + endpoint);
+        logger.log(java.util.logging.Level.INFO, "CONSCRYPT:isDelegating: " + isDelegating());
+        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            StringBuilder sb = new StringBuilder("Backtrace:\n");
+            // Skip first 2 elements as they are getStackTrace() and this method
+            for (int i = 2; i < stackTrace.length; i++) {
+                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
+            }
+        }
         if (peerHostname == null && endpoint instanceof InetSocketAddress) {
             peerHostname =
                     Platform.getHostStringFromInetSocketAddress((InetSocketAddress) endpoint);
