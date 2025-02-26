@@ -25,8 +25,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -43,10 +41,8 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     private final IOException instantiationException;
     private boolean useEngineSocket = useEngineSocketByDefault;
 
-    private static final Logger logger = Logger.getLogger(OpenSSLSocketFactoryImpl.class.getName());
 
     OpenSSLSocketFactoryImpl() {
-        logger.log(Level.INFO, "CONSCRYPT:OpenSSLSocketFactoryImpl()");
         SSLParametersImpl sslParametersLocal = null;
         IOException instantiationExceptionLocal = null;
         try {
@@ -59,7 +55,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     }
 
     OpenSSLSocketFactoryImpl(SSLParametersImpl sslParameters) {
-        logger.log(Level.INFO, "CONSCRYPT:OpenSSLSocketFactoryImpl(SSLParametersImpl sslParameters)");
         this.sslParameters = sslParameters;
         this.instantiationException = null;
     }
@@ -96,16 +91,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
 
     @Override
     public Socket createSocket() throws IOException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket()");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         if (instantiationException != null) {
             throw instantiationException;
         }
@@ -118,16 +103,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
 
     @Override
     public Socket createSocket(String hostname, int port) throws IOException, UnknownHostException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket(String hostname, int port)");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         if (useEngineSocket) {
             return createEngineSocket(
                     hostname, port, (SSLParametersImpl) sslParameters.clone());
@@ -140,16 +115,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     @Override
     public Socket createSocket(String hostname, int port, InetAddress localHost, int localPort)
             throws IOException, UnknownHostException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket(String hostname, int port, InetAddress localHost, int localPort)");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         if (useEngineSocket) {
             return createEngineSocket(hostname, port, localHost,
                     localPort, (SSLParametersImpl) sslParameters.clone());
@@ -161,16 +126,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
 
     @Override
     public Socket createSocket(InetAddress address, int port) throws IOException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket(InetAddress address, int port)");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         if (useEngineSocket) {
             return createEngineSocket(
                     address, port, (SSLParametersImpl) sslParameters.clone());
@@ -183,16 +138,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress,
             int localPort) throws IOException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         if (useEngineSocket) {
             return createEngineSocket(address, port, localAddress,
                     localPort, (SSLParametersImpl) sslParameters.clone());
@@ -205,16 +150,6 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     @Override
     public Socket createSocket(Socket socket, String hostname, int port, boolean autoClose)
             throws IOException {
-        logger.log(Level.INFO, "CONSCRYPT:createSocket(Socket socket, String hostname, int port, boolean autoClose)");
-        if (logger.isLoggable(Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
-            }
-            logger.log(Level.INFO, sb.toString());
-        }
         Preconditions.checkNotNull(socket, "socket");
         if (!socket.isConnected()) {
             throw new SocketException("Socket is not connected.");

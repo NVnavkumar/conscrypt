@@ -149,28 +149,36 @@ abstract class AbstractConscryptSocket extends SSLSocket {
      */
     @Override
     public final void connect(SocketAddress endpoint, int timeout) throws IOException {
-        logger.log(java.util.logging.Level.INFO, "CONSCRYPT:connect(SocketAddress endpoint, int timeout)");
+        // logger.log(java.util.logging.Level.INFO, "CONSCRYPT:connect(SocketAddress endpoint, int timeout)");
+        // logger.log(java.util.logging.Level.INFO, "CONSCRYPT:isDelegating: " + isDelegating());
+
         logger.log(java.util.logging.Level.INFO, "CONSCRYPT:endpoint: " + endpoint);
-        logger.log(java.util.logging.Level.INFO, "CONSCRYPT:isDelegating: " + isDelegating());
-        if (logger.isLoggable(java.util.logging.Level.INFO)) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            StringBuilder sb = new StringBuilder("Backtrace:\n");
-            // Skip first element it is getStackTrace()
-            for (int i = 1; i < stackTrace.length; i++) {
-                sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
+        // TODO: Check backtrace for relevant classes from Hadoop Connector to determine if this is coming Hadoop/Spark
+        // Check for com.google.cloud.hadoop.services
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        boolean foundHadoopService = false;
+        for (StackTraceElement element : stackTrace) {
+            if (element.getClassName().contains("com.google.cloud.hadoop.services")) {
+                foundHadoopService = true;
+                logger.log(java.util.logging.Level.INFO, "CONSCRYPT: Found Hadoop service in stack: " + element.getClassName());
+                break;
             }
-            logger.log(java.util.logging.Level.INFO, sb.toString());
         }
+        if (!foundHadoopService) {
+            logger.log(java.util.logging.Level.INFO, "CONSCRYPT: No Hadoop service found in stack trace");
+        }
+
         if (endpoint instanceof InetSocketAddress) {
             InetSocketAddress inetSocketAddress = (InetSocketAddress) endpoint;
-            String host = inetSocketAddress.getHostString();
-            InetAddress resolvedAddress = hardcodedDnsResolver.resolve(host);
-            if (resolvedAddress != null) {
-                endpoint = new InetSocketAddress(resolvedAddress, inetSocketAddress.getPort());
-                peerHostname = host;
+            String hostname = Platform.getHostStringFromInetSocketAddress(inetSocketAddress);
+            if (foundHadoopService) {
+                InetAddress resolvedAddress = hardcodedDnsResolver.resolve(hostname);
+                if (resolvedAddress != null) {
+                    endpoint = new InetSocketAddress(resolvedAddress, inetSocketAddress.getPort());
+                    peerHostname = hostname;
+                }
             } else if (peerHostname == null) {
-                peerHostname = 
-                    Platform.getHostStringFromInetSocketAddress((InetSocketAddress) endpoint);
+                peerHostname = hostname;
             }
         }
 
