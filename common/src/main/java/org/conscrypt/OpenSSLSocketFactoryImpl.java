@@ -46,6 +46,7 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     private static final Logger logger = Logger.getLogger(OpenSSLSocketFactoryImpl.class.getName());
 
     OpenSSLSocketFactoryImpl() {
+        logger.log(Level.INFO, "CONSCRYPT:OpenSSLSocketFactoryImpl()");
         SSLParametersImpl sslParametersLocal = null;
         IOException instantiationExceptionLocal = null;
         try {
@@ -58,6 +59,7 @@ final class OpenSSLSocketFactoryImpl extends SSLSocketFactory {
     }
 
     OpenSSLSocketFactoryImpl(SSLParametersImpl sslParameters) {
+        logger.log(Level.INFO, "CONSCRYPT:OpenSSLSocketFactoryImpl(SSLParametersImpl sslParameters)");
         this.sslParameters = sslParameters;
         this.instantiationException = null;
     }
