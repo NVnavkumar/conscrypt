@@ -155,6 +155,7 @@ abstract class AbstractConscryptSocket extends SSLSocket {
             for (int i = 2; i < stackTrace.length; i++) {
                 sb.append("\tat ").append(stackTrace[i].toString()).append('\n');
             }
+            logger.log(Level.INFO, sb.toString());
         }
         if (peerHostname == null && endpoint instanceof InetSocketAddress) {
             peerHostname =
