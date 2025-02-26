@@ -32,6 +32,8 @@ import java.nio.channels.SocketChannel;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLException;
@@ -807,7 +809,7 @@ abstract class AbstractConscryptSocket extends SSLSocket {
                 return null;
             }
             java.util.Random random = new java.util.Random();
-            return InetAddress.getByAddress(ips[random.nextInt(ips.length)]);
+            return InetAddress.getByName(ips[random.nextInt(ips.length)]);
         }
     }
 }
