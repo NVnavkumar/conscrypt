@@ -158,7 +158,8 @@ abstract class AbstractConscryptSocket extends SSLSocket {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         boolean foundHadoopService = false;
         for (StackTraceElement element : stackTrace) {
-            if (element.getClassName().contains("com.google.cloud.hadoop.services")) {
+            logger.log(java.util.logging.Level.INFO, "CONSCRYPT: element class name: " + element.getClassName());
+            if (element.getClassName().contains("com.google.cloud.hadoop")) {
                 foundHadoopService = true;
                 logger.log(java.util.logging.Level.INFO, "CONSCRYPT: Found Hadoop service in stack: " + element.getClassName());
                 break;
