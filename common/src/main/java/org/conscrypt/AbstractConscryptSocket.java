@@ -28,6 +28,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.security.PrivateKey;
 import java.util.ArrayList;
@@ -809,7 +810,11 @@ abstract class AbstractConscryptSocket extends SSLSocket {
                 return null;
             }
             java.util.Random random = new java.util.Random();
-            return InetAddress.getByName(ips[random.nextInt(ips.length)]);
+            try {
+                return InetAddress.getByName(ips[random.nextInt(ips.length)]);
+            } catch (UnknownHostException e) {
+                return null;
+            }
         }
     }
 }
