@@ -45,6 +45,7 @@ abstract class AbstractConscryptSocket extends SSLSocket {
     final Socket socket;
     private final boolean autoClose;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AbstractConscryptSocket.class.getName());
+    private static final HardcodedDnsResolver hardcodedDnsResolver = new HardcodedDnsResolver();
 
     /**
      * The peer's DNS hostname if it was supplied during creation. Note that
@@ -157,9 +158,17 @@ abstract class AbstractConscryptSocket extends SSLSocket {
             }
             logger.log(java.util.logging.Level.INFO, sb.toString());
         }
-        if (peerHostname == null && endpoint instanceof InetSocketAddress) {
-            peerHostname =
+        if (endpoint instanceof InetSocketAddress) {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) endpoint;
+            String host = inetSocketAddress.getHostString();
+            InetAddress resolvedAddress = hardcodedDnsResolver.resolve(host);
+            if (resolvedAddress != null) {
+                endpoint = new InetSocketAddress(resolvedAddress, inetSocketAddress.getPort());
+                peerHostname = host;
+            } else if (peerHostname == null) {
+                peerHostname = 
                     Platform.getHostStringFromInetSocketAddress((InetSocketAddress) endpoint);
+            }
         }
 
         if (isDelegating()) {
@@ -767,4 +776,38 @@ abstract class AbstractConscryptSocket extends SSLSocket {
      */
     abstract byte[] exportKeyingMaterial(String label, byte[] context, int length)
             throws SSLException;
+
+    static final class HardcodedDnsResolver {
+        private static final Map<String, String[]> HOSTNAME_TO_IP_MAP = new HashMap<>();
+
+        static {
+            HOSTNAME_TO_IP_MAP.put("storage.googleapis.com", new String[] {
+                  "142.250.152.207",
+                  "173.194.195.207",
+                  "172.217.214.207",
+                  "142.251.184.207",
+                  "108.177.121.207",
+                  "209.85.145.207",
+                  "142.250.125.207",
+                  "209.85.200.207",
+                  "74.125.126.207",
+                  "74.125.132.207",
+                  "74.125.201.207",
+                  "74.125.202.207",
+                  "74.125.69.207",
+                  "64.233.181.207",
+                  "142.251.183.207",
+                  "173.194.206.207"  
+            });
+        }
+
+        public InetAddress resolve(String hostname) {
+            String[] ips = HOSTNAME_TO_IP_MAP.get(hostname);
+            if (ips == null) {
+                return null;
+            }
+            java.util.Random random = new java.util.Random();
+            return InetAddress.getByAddress(ips[random.nextInt(ips.length)]);
+        }
+    }
 }
